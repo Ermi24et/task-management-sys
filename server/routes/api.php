@@ -9,6 +9,8 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 
 Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\Api\v1'], function () {
     Route::apiResource('tasks', 'TaskController')->middleware('auth:sanctum');
-    Route::get('users/{id}/tasks', 'UserController@userTasks')->middleware('auth:sanctum');
+    Route::get('users/{id}/tasks', 'TaskController@userTasks')->middleware('auth:sanctum');
     Route::post('users/{id}/tasks', 'UserController@createTask')->middleware('auth:sanctum');
+    Route::get('users/{id}/assigned', 'TaskController@assignedTasks')->middleware('auth:sanctum');
+    Route::patch('tasks/{id}/assign', 'TaskController@assignTask')->middleware('auth:sanctum');
 });
