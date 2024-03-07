@@ -9,6 +9,7 @@ use App\Http\Resources\v1\TaskCollection;
 use App\Http\Resources\v1\TaskResource;
 use App\Models\Task;
 use App\Models\User;
+
 //use GuzzleHttp\Psr7\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
@@ -19,34 +20,18 @@ class TaskController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): TaskCollection
     {
         return new TaskCollection(Task::paginate(20));
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreTaskRequest $request)
+    public function store(StoreTaskRequest $request): TaskResource
     {
         return new TaskResource(Task::create($request->validated()));
     }
-
-    /**
-     * Display the specified resource.
-     */
-//    public function show(Task $task): TaskResource
-//    {
-//        return new TaskResource($task);
-//    }
 
     public function show($id): TaskResource|JsonResponse
     {
@@ -59,13 +44,6 @@ class TaskController extends Controller
         return new TaskResource($task);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Task $task)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -105,12 +83,12 @@ class TaskController extends Controller
             return response()->json(['error' => 'Task not found.'], Response::HTTP_NOT_FOUND);
         }
 
-        $user = User::find($request->input('user'));
+        $user = User::where('email', $request->input('email'))->first();
         if (!$user) {
             return response()->json(['error' => 'User not found.'], Response::HTTP_NOT_FOUND);
         }
 
-        $task->user_id = $user->id;
+        $task->assigned_to = $user->id;
         $task->save();
 
         return response()->json([
@@ -121,14 +99,31 @@ class TaskController extends Controller
 
     /**
      * Show tasks by user.
+     * @param $id
+     * @return TaskCollection|JsonResponse
      */
-    public function userTasks($id): TaskCollection | JsonResponse
+    public function userTasks($id): TaskCollection|JsonResponse
     {
         $user = User::find($id);
         if (!$user) {
             return response()->json(['error' => 'User not found.'], Response::HTTP_NOT_FOUND);
         }
-        return new TaskCollection(Task::where('user_id', $id)->get());
+        return new TaskCollection(Task::where('user_id', $id)
+            ->orWhere('assigned_to', $id)
+            ->orderBy('updated_at', 'desc')
+            ->get());
+    }
+
+    /**
+     * Show tasks assigned to a user.
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function assignedTasks(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $assignedTasks = $user->tasksAssigned;
+        return response()->json($assignedTasks);
     }
 
 }
