@@ -26,15 +26,27 @@ export const useTask = () => {
     }
   };
 
+  const fetchAssignedTasks = async (): Promise<Task[]> => {
+    await csrf();
+    try {
+      const response = await axios.get(`/api/v1/users/${user?.id}/assigned`);
+      return response.data;
+    } catch (error) {
+      // @ts-ignore
+      throw error;
+    }
+  }
+
   const createTask = async ({ ...props }: Task) => {
     await csrf();
-
     try {
-      await axios.post("/tasks", props);
+      const res = await axios.post(`/api/v1/users/${user?.id}/tasks`, props);
+        return res.data.data;
     } catch (error) {
       // if (error.response && error.response.status === 422) {
       //     setErrors(error.response.data.errors);
       // } else {
+      console.log(error)
       throw error;
       // }
     }
@@ -83,5 +95,5 @@ export const useTask = () => {
     }
   };
 
-  return { createTask, updateTask, deleteTask, fetchTasks };
+  return { createTask, updateTask, deleteTask, fetchTasks, fetchAssignedTasks };
 };
