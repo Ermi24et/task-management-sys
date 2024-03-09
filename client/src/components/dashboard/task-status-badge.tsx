@@ -4,9 +4,9 @@ export default function TaskStatusBadge({ status }: { status: string }) {
   const handleSwitch = (status: string) => {
     switch (status) {
       case "pending":
-        return `bg-yellow-500`;
+        return `bg-gray-400`;
       case "in_progress":
-        return `bg-blue-500`;
+        return `bg-yellow-500`;
 
       case "completed":
         return `bg-green-500`;
