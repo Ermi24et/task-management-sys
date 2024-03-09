@@ -16,4 +16,6 @@ class TaskCollection extends ResourceCollection
     {
         return parent::toArray($request);
     }
+
+    public static $wrap = 'tasks';
 }
