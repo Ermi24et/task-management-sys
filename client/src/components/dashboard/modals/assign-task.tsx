@@ -4,14 +4,15 @@
 import {Fragment, useRef} from 'react'
 import {Dialog, Transition} from '@headlessui/react'
 import React from "react";
-import CreateTaskForm from "@/components/dashboard/create-task-form";
+import AssignTaskForm from '../assign-task-form';
 
 interface ModalProps {
     open: boolean;
     setOpen: (open: boolean) => void;
+    taskId: string | undefined;
 }
 
-export default function CreateTask({open, setOpen}: ModalProps): React.ReactNode {
+export default function AssignTask({open, setOpen, taskId}: ModalProps): React.ReactNode {
     const cancelButtonRef = useRef(null)
 
     return (
@@ -41,9 +42,10 @@ export default function CreateTask({open, setOpen}: ModalProps): React.ReactNode
                             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                         >
                             <Dialog.Panel
-                                className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                                className="p-4 relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
                                 <div>
-                                    <CreateTaskForm close={setOpen}/>
+
+                                    <AssignTaskForm close={setOpen} taskId={taskId} open={open} />
                                 </div>
                             </Dialog.Panel>
                         </Transition.Child>

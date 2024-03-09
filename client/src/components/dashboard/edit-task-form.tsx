@@ -10,6 +10,7 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form';
+import {Textarea} from "@/components/ui/textarea"
 import {FaCalendar} from "react-icons/fa6"
 import {Input} from '@/components/ui/input';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -21,6 +22,16 @@ import React, {useState} from "react";
 import {cn} from "@/lib/utils";
 import {useTask} from "@/hooks/task";
 import {useTasks} from "@/contexts/useTask";
+import {Task} from "@/lib/types/Task";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue
+} from "@/components/ui/select";
 
 
 const formSchema = z.object({
@@ -31,11 +42,17 @@ const formSchema = z.object({
         message: 'Description too long.',
     }),
     due_date: z.date({
-        required_error: "A due date is required.",
-    })
+        required_error: "Due date is required.",
+    }),
+    status: z.enum(['pending', 'in_progress', 'completed'], {
+        required_error: "A status is required. Must be one of 'pending', 'in_progress', 'completed'"
+    }),
+    priority: z.enum(['low', 'mid', 'high'], {
+        required_error: "A priority is required. Must be one of 'low', 'mid', 'high'"
+    }),
 });
-export default function CreateTaskForm({close}: { close: (open: boolean) => void }): React.ReactNode {
-    const {createTask} = useTask();
+export default function EditTaskForm({close, task}: { close: (open: boolean) => void, task: Task }): React.ReactNode {
+    const {updateTask} = useTask();
     const {refetchTasks} = useTasks();
     const [showCalender, setShowCalender] = useState(false)
     const [errors, setErrors] = useState<string[]>([]);
@@ -43,17 +60,22 @@ export default function CreateTaskForm({close}: { close: (open: boolean) => void
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            title: '',
-            description: '',
-            due_date: new Date(),
+            title: task.title,
+            description: task.description,
+            due_date: new Date(task.due_date as string),
+            status: task.status,
+            priority: task.priority
         },
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        const res = await createTask({
+        const res = await updateTask({
+            id: task.id as string,
             title: values.title,
             description: values.description,
             due_date: format(values.due_date, "yyyy-MM-dd"),
+            status: values.status,
+            priority: values.priority,
             setErrors
         });
         refetchTasks()
@@ -91,18 +113,77 @@ export default function CreateTaskForm({close}: { close: (open: boolean) => void
                                 <FormItem className="">
                                     <FormLabel>Description</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Write something about your task" {...field} />
+                                        <Textarea placeholder="Write something about your task" {...field} />
                                     </FormControl>
                                     {/*<FormDescription>Task description</FormDescription>*/}
                                     <FormMessage/>
                                 </FormItem>
                             )}
                         />
+                        <div className={'flex gap-20'}>
+                            <FormField
+                                control={form.control}
+                                name="status"
+                                render={({field}) => (
+                                    <FormItem style={{margin: 0}}>
+                                        <FormLabel>Status</FormLabel>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger className="w-[100px] px-2 ">
+                                                    <SelectValue placeholder="Set priority"/>
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    <SelectLabel>title</SelectLabel>
+                                                    {['pending', 'completed', 'in_progress'].map((el, index) => (
+                                                        <SelectItem key={index} value={el}>{el}</SelectItem>
+                                                    ))}
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormDescription>
+                                            {/*Please enter a title for your task.*/}
+                                        </FormDescription>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="priority"
+                                render={({field}) => (
+                                    <FormItem style={{margin: 0}}>
+                                        <FormLabel>Priority</FormLabel>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger className="w-[100px] px-2 ">
+                                                    <SelectValue placeholder="Set priority"/>
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    <SelectLabel>Priority</SelectLabel>
+                                                    {['low', 'mid', 'high'].map((el, index) => (
+                                                        <SelectItem key={index} value={el}>{el}</SelectItem>
+                                                    ))}
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormDescription>
+                                            {/*Please enter a title for your task.*/}
+                                        </FormDescription>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
+
+                        </div>
                         <FormField
                             control={form.control}
                             name="due_date"
                             render={({field}) => (
-                                <FormItem className="flex flex-col items-center">
+                                <FormItem className="flex flex-col items-start">
                                     {/*<FormLabel>Due date</FormLabel>*/}
                                     <FormControl>
                                         <Button
@@ -114,7 +195,7 @@ export default function CreateTaskForm({close}: { close: (open: boolean) => void
                                             onClick={() => setShowCalender(!showCalender)}
                                             type={'button'}
                                         >
-                                            {field.value ? (
+                                            {field.value && !isNaN(field.value.getTime()) ? (
                                                 format(field.value, "MM-dd-yyyy")
                                             ) : (
                                                 <span>Pick a date</span>
@@ -152,7 +233,7 @@ export default function CreateTaskForm({close}: { close: (open: boolean) => void
                                 className="w-full"
                                 size={'sm'}
                             >
-                                Create
+                                Update
                             </Button>
                         </div>
                     </form>

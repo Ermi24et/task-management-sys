@@ -4,14 +4,16 @@
 import {Fragment, useRef} from 'react'
 import {Dialog, Transition} from '@headlessui/react'
 import React from "react";
-import CreateTaskForm from "@/components/dashboard/create-task-form";
+import EditTaskForm from "@/components/dashboard/edit-task-form";
+import {Task} from "@/lib/types/Task";
 
 interface ModalProps {
     open: boolean;
+    task: Task
     setOpen: (open: boolean) => void;
 }
 
-export default function CreateTask({open, setOpen}: ModalProps): React.ReactNode {
+export default function EditTask({open, setOpen, task}: ModalProps): React.ReactNode {
     const cancelButtonRef = useRef(null)
 
     return (
@@ -43,7 +45,7 @@ export default function CreateTask({open, setOpen}: ModalProps): React.ReactNode
                             <Dialog.Panel
                                 className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
                                 <div>
-                                    <CreateTaskForm close={setOpen}/>
+                                    <EditTaskForm close={setOpen} task={task}/>
                                 </div>
                             </Dialog.Panel>
                         </Transition.Child>
