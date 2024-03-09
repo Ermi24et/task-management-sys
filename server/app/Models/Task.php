@@ -2,29 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Task extends Model
 {
-    use HasFactory;
+    use HasFactory, hasUuids;
 
-//    public function user(): BelongsToMany
-//    {
-//        return $this->belongsToMany(User::class, 'task_user')->withTimestamps();
-//    }
-//
-//    protected $fillable = [
-//        'title',
-//        'description',
-//        'user_id',
-//        'due_date',
-//        'priority',
-//        'status',
-//    ];
-//
     protected $fillable = [
         'title',
         'description',
