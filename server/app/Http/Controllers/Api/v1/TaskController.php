@@ -117,13 +117,13 @@ class TaskController extends Controller
     /**
      * Show tasks assigned to a user.
      * @param Request $request
-     * @return JsonResponse
+     * @return TaskCollection
      */
-    public function assignedTasks(Request $request): JsonResponse
+    public function assignedTasks(Request $request): TaskCollection
     {
         $user = $request->user();
         $assignedTasks = $user->tasksAssigned;
-        return response()->json($assignedTasks);
+        return new TaskCollection($assignedTasks);
     }
 
 }
