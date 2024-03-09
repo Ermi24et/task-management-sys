@@ -1,9 +1,8 @@
 import type {Metadata} from "next";
 import {Inter} from 'next/font/google';
-import Header from '@/components/header'
+import Header from '@/components/core/header'
 import "./globals.css";
 import React from "react";
-
 const inter = Inter({subsets: ['latin']});
 
 export const metadata: Metadata = {
@@ -20,7 +19,7 @@ export default function RootLayout({
         <html lang="en">
         <body className={`${inter.className} bg-[#fefefe]`}>
         <Header/>
-        {children}
+            {children}
         </body>
         </html>
     );
