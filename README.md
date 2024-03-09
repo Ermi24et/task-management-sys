@@ -18,7 +18,8 @@ Source files for the Task Management System application built with Laravel and N
 - Laravel 10.x (with Breeze, Sail, and Sanctum)
 - Next.js
 - MySQL
-- Tailwind CSS
+- Shadcn UI (Tailwind CSS)
+- Docker (optional)
 
 
 ## Folder Structure
