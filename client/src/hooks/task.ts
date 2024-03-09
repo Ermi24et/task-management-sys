@@ -2,8 +2,9 @@
 
 import axios from "@/lib/axios";
 import { useParams, useRouter } from "next/navigation";
-import { Task } from "@/lib/types/Task";
+import {CreateTask, Task} from "@/lib/types/Task";
 import { useAuth } from "@/hooks/auth";
+import {AxiosResponse} from "axios";
 
 export const useTask = () => {
   const router = useRouter();
@@ -19,7 +20,7 @@ export const useTask = () => {
     await csrf();
     try {
       const response = await axios.get(`/api/v1/users/${user?.id}/tasks`);
-      return response.data?.data;
+      return response.data?.tasks;
     } catch (error) {
       // @ts-ignore
       throw error;
@@ -30,41 +31,40 @@ export const useTask = () => {
     await csrf();
     try {
       const response = await axios.get(`/api/v1/users/${user?.id}/assigned`);
-      return response.data;
+      return response.data?.tasks;
     } catch (error) {
       // @ts-ignore
       throw error;
     }
   }
 
-  const createTask = async ({ ...props }: Task) => {
+  const createTask = async ({ setErrors, ...props }: CreateTask) => {
     await csrf();
     try {
       const res = await axios.post(`/api/v1/users/${user?.id}/tasks`, props);
         return res.data.data;
-    } catch (error) {
-      // if (error.response && error.response.status === 422) {
-      //     setErrors(error.response.data.errors);
-      // } else {
+    } catch (error: AxiosResponse | any) {
       console.log(error)
+      if (error?.response && error?.response?.status === 422) {
+          setErrors(error.response.data.errors);
+      } else {
       throw error;
-      // }
+      }
     }
   };
 
-  const updateTask = async ({ ...props }: Task) => {
+  const updateTask = async ({ setErrors, ...props }: CreateTask) => {
     await csrf();
 
     try {
-      const res = await axios.put(`/tasks/${props.id}`, props);
+      const res = await axios.patch(`/api/v1/tasks/${props.id}`, props);
       return res.data;
-    } catch (error) {
-      // if (error.response && error.response.status === 422) {
-      //     setErrors(error.response.data.errors);
-      // } else {
-      //     throw error;
-      // }
+    } catch (error: AxiosResponse | any) {
+      if (error?.response && error?.response?.status === 422) {
+          setErrors(error.response.data.errors);
+      } else {
       throw error;
+      }
     }
   };
 
@@ -72,14 +72,13 @@ export const useTask = () => {
     await csrf();
 
     try {
-      await axios.delete(`/task/${id}`);
-    } catch (error) {
-      // if (error.response && error.response.status === 422) {
-      //     // Handle error as needed
-      // } else {
-      //     throw error;
-      // }
+      await axios.delete(`/api/v1/tasks/${id}`);
+    } catch (error: AxiosResponse | any) {
+      if (error?.response && error?.response?.status === 422) {
+          return error.response.data.errors;
+      } else {
       throw error;
+      }
     }
   };
 
@@ -95,5 +94,17 @@ export const useTask = () => {
     }
   };
 
-  return { createTask, updateTask, deleteTask, fetchTasks, fetchAssignedTasks };
+  const assignTask = async (id: string, email: string) => {
+    await csrf();
+
+    try {
+      const response = await axios.patch(`/api/v1/tasks/${id}/assign`, { email });
+      return response.data;
+    } catch (error) {
+      // @ts-ignore
+      throw error;
+    }
+  }
+
+  return { createTask, updateTask, deleteTask, fetchTasks, fetchAssignedTasks, assignTask, getTask};
 };
