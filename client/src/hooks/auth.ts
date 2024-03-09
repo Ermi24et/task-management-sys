@@ -106,7 +106,7 @@ export const useAuth = ({middleware, redirectIfAuthenticated}: AuthOpts = {}) =>
             router.push(redirectIfAuthenticated)
         if (
             window.location.pathname === '/verify-email' &&
-            user?.email_verified_at
+            user?.emailVerifiedAt
         )
             router.push(redirectIfAuthenticated as string)
         if (middleware === 'auth' && error) logout()

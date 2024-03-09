@@ -88,7 +88,7 @@ export default function Header() {
                                             <span className="sr-only">Open user menu</span>
                                             <Image
                                                 className="h-8 w-8 rounded-full"
-                                                src={user?.profile_image ?? 'https://placehold.co/400'}
+                                                src={user?.profileImage ?? 'https://placehold.co/400'}
                                                 alt="profile picture"
                                                 width={32}
                                                 height={32}
