@@ -35,7 +35,7 @@ To get started with the application, you need to set up the Laravel backend and 
 
 ### Prerequisites
 - PHP (Version 8.1.x)
-- MySQL (Version 5.7)
+- MySQL (Version 8.x)
 - Composer
 - Node.js ^18.x and npm
 

@@ -10,7 +10,6 @@ use App\Http\Resources\v1\TaskResource;
 use App\Models\Task;
 use App\Models\User;
 
-//use GuzzleHttp\Psr7\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use \Illuminate\Http\JsonResponse;
@@ -89,6 +88,7 @@ class TaskController extends Controller
         }
 
         $task->assigned_to = $user->id;
+        $task->assigned_by = $request->user()->id;
         $task->save();
 
         return response()->json([
@@ -117,13 +117,17 @@ class TaskController extends Controller
     /**
      * Show tasks assigned to a user.
      * @param Request $request
-     * @return TaskCollection
+     * @param $id string
+     * @return TaskCollection|JsonResponse
      */
-    public function assignedTasks(Request $request): TaskCollection
+    public function assignedTasks(Request $request, string $id): TaskCollection | JsonResponse
     {
-        $user = $request->user();
-        $assignedTasks = $user->tasksAssigned;
-        return new TaskCollection($assignedTasks);
+        $user = User::findOrFail($id);
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found.'], Response::HTTP_NOT_FOUND);
+        }
+        return new TaskCollection($user->tasksAssigned);
     }
 
 }
