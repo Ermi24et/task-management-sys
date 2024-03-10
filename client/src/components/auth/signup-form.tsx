@@ -21,7 +21,7 @@ import {useState} from "react";
 
 const formSchema = z.object({
   email: z.string().min(2, {
-    message: 'Username must be at least 2 characters.',
+    message: 'Must be a valid email.',
   }),
   password: z.string().min(8, {
     message: 'Password must be at least 8 characters.',
@@ -66,9 +66,6 @@ export default function SignUp() {
         password_confirmation: values.password_confirmation,
         setErrors
     });
-    // if (res) {
-    //   console.log(res);
-    // }
   }
 
   return (

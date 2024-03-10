@@ -7,9 +7,11 @@ import TaskList from "@/components/dashboard/task-list";
 import {Button} from "@/components/ui/button";
 import { FaPlusCircle} from "react-icons/fa";
 import CreateTask from "@/components/dashboard/modals/create-task";
+import {useAuth} from "@/hooks/auth";
 
 export default function Page(): React.ReactNode {
     const {tasks, assignedTasks} = useTasks()
+    const { user } = useAuth()
     const [status, setStatus] = useState<string>('All')
     const [open, setOpen] = useState(false)
 
@@ -20,6 +22,8 @@ export default function Page(): React.ReactNode {
     const handleCreateModal = () => {
         setOpen(!open)
     }
+
+    if (!user) return null
 
     return (
         <div className='lg:container px-2 py-10 w-full'>

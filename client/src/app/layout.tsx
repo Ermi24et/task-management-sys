@@ -3,6 +3,9 @@ import {Inter} from 'next/font/google';
 import Header from '@/components/core/header'
 import "./globals.css";
 import React from "react";
+import { Toaster } from "@/components/ui/toaster"
+
+
 const inter = Inter({subsets: ['latin']});
 
 export const metadata: Metadata = {
@@ -19,6 +22,7 @@ export default function RootLayout({
         <html lang="en">
         <body className={`${inter.className} bg-[#fefefe]`}>
         <Header/>
+        <Toaster />
         {children}
         </body>
         </html>

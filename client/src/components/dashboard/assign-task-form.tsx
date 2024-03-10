@@ -59,7 +59,7 @@ export default function AssignTaskForm({
       toast({
           variant: "destructive",
           title: "Uh oh! Something went wrong.",
-          description: "Not a valid email. Enter a valid email.",
+          description: "This email is not registered with us.",
         })
     close(false);
       // console.log(e)
