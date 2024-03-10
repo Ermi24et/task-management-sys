@@ -15,7 +15,6 @@ export default function TaskCard({task}: { task: Task }) {
     const [showAssign, setShowAssign] = useState<boolean>(false)
     const [showEdit, setShowEdit] = useState(false)
 
-
     return (
         <div className="todo-card">
             <table className="hidden md:table">
@@ -95,6 +94,7 @@ export default function TaskCard({task}: { task: Task }) {
                 </tbody>
             </table>
 
+        {/* Mobile view */}
             <div className="md:hidden">
                 <div className="flex flex-col md:hidden py-4 px-2 bg-white rounded-lg shadow-md">
                     <h3 className="text-lg font-medium text-gray-900 mb-2">{task.title}</h3>
@@ -110,18 +110,19 @@ export default function TaskCard({task}: { task: Task }) {
                     </div>
                     <p className="text-sm text-gray-500 mr-2">Description</p>
                     <p className="text-sm text-gray-700 mb-4">{task.description}</p>
+
                     <div className={'flex items-center bg-gray-50 rounded-lg p-2 gap-2'}>
                         <Button
                             variant="ghost" size='icon' onClick={() => setShowEdit(!showEdit)}>
-                            <FaRegPenToSquare className='text-lg text-green-500'/>
+                            <FaRegPenToSquare className='text-xl text-green-500'/>
                         </Button>
                         <Button
                             variant="ghost" size='icon' className='' onClick={() => setShowAssign(!showAssign)}>
-                            <FaUserPlus className={'text-green-500 text-lg'}/>
+                            <FaUserPlus className={'text-green-500 text-xl'}/>
                         </Button>
                         <Button
                             variant="ghost" size='icon' className='' onClick={() => setShowDelete(!showDelete)}>
-                            <FaTrash className={'text-red-500 text-lg'}/>
+                            <FaTrash className={'text-red-500 text-xl'}/>
                         </Button>
                         <DeleteTask open={showDelete} setOpen={setShowDelete} id={task.id as string}/>
                         <AssignTask open={showAssign} setOpen={setShowAssign} taskId={task.id as string}/>

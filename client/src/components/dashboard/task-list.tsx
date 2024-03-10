@@ -8,8 +8,6 @@ import TaskCard from "@/components/dashboard/task-card";
 export default function TaskList({type}: { type?: string }) {
     const {tasks, assignedTasks} = useTasks()
 
-    const allTask = tasks.filter((task) => task.status === 'pending')
-
     const getTaskType = (type: string): Task[] => {
         switch (type) {
             case 'pending':
@@ -37,6 +35,12 @@ export default function TaskList({type}: { type?: string }) {
                                         {task.title}
                                     </p>
                                     <TaskStatusBadge status={task.status as string}/>
+                                    {task.assignedBy && (
+                                        <div className="flex mb-2">
+                                            <span className="text-sm text-gray-500 mr-2">Assigned By:</span>
+                                            <span className="text-sm text-gray-700">{task.assignedBy.name}</span>
+                                        </div>
+                                    )}
                                 </div>
                             </AccordionTrigger>
                             <AccordionContent>
